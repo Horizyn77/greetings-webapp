@@ -1,0 +1,33 @@
+<h1>Greet Me</h1>
+<main>
+    <h2>Name: </h2>
+    <form action="/" method="POST">
+        <input type="text" name="greetedName" id="" placeholder="Please enter your name">
+        <button class="greetBtn" type="submit">Greet Me!</button>
+        <div class="errMsg">A</div>
+        <h2 class="langHeading">Language: </h2>
+        <div id="langGroup">
+            <div class="langItem">
+                <input type="radio" name="lang" id="english" value="eng">
+                <img id="image-1" src="images/001-united-kingdom.png" alt="">
+                <label for="english">English</label>
+            </div>
+            <div class="langItem">
+                <input type="radio" name="lang" id="arabic" value="ara">
+                <img id="image-2" src="images/002-saudi-arabia.png" alt="">
+                <label for="arabic">Arabic</label>
+            </div>
+            <div class="langItem">
+                <input type="radio" name="lang" id="urdu" value="urd">
+                <img id="image-3" src="images/003-pakistan.png" alt="">
+                <label for="urdu">Urdu</label>
+            </div>
+    </form>
+    </div>
+    <h2 class="greetedUsers"><a href="./greeted">View Greeted Users</a>
+    </h2>
+    <button class="resetBtn">Reset</button>
+    <h2 class="greetingHeading">Greeting:</h2>
+    <div class="result">{{greeting}}</div>
+    <div class="underline"></div>
+</main>
