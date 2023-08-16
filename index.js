@@ -1,16 +1,12 @@
 import express from "express";
 const app = express();
 import { engine } from "express-handlebars";
-import pkg from 'pg';
-const { Pool } = pkg;
 import 'dotenv/config';
 import Greetings from "./greetings-webapp.js"
 
 const greetings = Greetings();
 
 const PORT = process.env.PORT || 3000;
-
-const connectionString = "postgres://greetings_postgres_user:aMUnTV4ibJXwDBbvNpV66NDAmiLaPWQJ@dpg-cjd0onbbq8nc73fhveh0-a.oregon-postgres.render.com/greetings_postgres?ssl=true"
 
 app.engine("handlebars", engine({
     layoutsDir: "./views/layouts"
@@ -23,25 +19,6 @@ app.use(express.static("public"))
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-const db = new pkg.Pool({connectionString});
-
-const createTableQuery = `
-    CREATE TABLE IF NOT EXISTS greetings (
-        id SERIAL PRIMARY KEY,
-        greeted_user VARCHAR(255) NOT NULL,
-        times_greeted INT NOT NULL
-    )
-`
-
-db.query(createTableQuery, (err, res) => {
-    if (err) {
-        console.error('Error creating table:', err);
-      } else {
-        console.log('Table created successfully');
-      }
-
-      db.end(); 
-})
 
 app.get("/", (req, res) => {
     res.render("index");
@@ -61,8 +38,8 @@ app.post("/", (req, res) => {
     })  
 })
 
-app.get("/greeted", (req, res) => {
-    const countObj = greetings.getCount();
+app.get("/greeted", async (req, res) => {
+    const countObj = await greetings.setUserAndCount();
     const checkObj = greetings.checkObj();
 
     res.render("greetedUsers", {
