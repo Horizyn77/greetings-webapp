@@ -189,6 +189,10 @@ input[type="text"]:focus {
     text-decoration: none;
 }
 
+.greetedList p {
+    margin-left: -20px;
+}
+
 @media (min-width: 821px) {
     .langItem {
         display: inline;
