@@ -21,9 +21,11 @@ app.use(express.urlencoded({extended: false}));
 
 
 app.get("/", async (req, res) => {
+
+    const numGreeted = await greetings.getNumGreeted();
     
     res.render("index", {
-        numGreeted: await greetings.getNumGreeted()
+        numGreeted
     });
 })
 app.post("/", async (req, res) => {
@@ -35,10 +37,11 @@ app.post("/", async (req, res) => {
     greetings.greetUser(name, radioBtnSelected);
     
     const greeting = greetings.getGreeting();
+    const numGreeted = await greetings.getNumGreeted()
 
     res.render("index", {
         greeting,
-        numGreeted: await greetings.getNumGreeted()
+        numGreeted
     })  
 })
 
