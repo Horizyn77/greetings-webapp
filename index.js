@@ -20,10 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 
-app.get("/", (req, res) => {
-    res.render("index");
+app.get("/", async (req, res) => {
+    
+    res.render("index", {
+        numGreeted: await greetings.getNumGreeted()
+    });
 })
-app.post("/", (req, res) => {
+app.post("/", async (req, res) => {
 
     const name = req.body.greetedName;
     const radioBtnSelected = req.body.lang;
@@ -34,7 +37,8 @@ app.post("/", (req, res) => {
     const greeting = greetings.getGreeting();
 
     res.render("index", {
-        greeting
+        greeting,
+        numGreeted: await greetings.getNumGreeted()
     })  
 })
 

@@ -180,6 +180,15 @@ input[type="text"]:focus {
     text-decoration: underline;
 }
 
+.backBtn {
+    margin-left: 20px;
+}
+
+.backBtn a {
+    color: #0e9747;
+    text-decoration: none;
+}
+
 @media (min-width: 821px) {
     .langItem {
         display: inline;

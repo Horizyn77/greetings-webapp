@@ -48,6 +48,17 @@ export default function Greetings() {
 
     }
 
+    async function getNumGreeted() {
+
+        const numOfRowsQuery = "SELECT COUNT(*) FROM greetings;";
+
+        const result = await db.one(numOfRowsQuery)
+
+        const numOfRows = parseInt(result.count, 10);
+        
+        return numOfRows;
+    }
+
     function greetUser(user, radioBtn) {
         const engGreeting = "Hello";
         const araGreeting = "Marhaba";
@@ -80,6 +91,7 @@ export default function Greetings() {
         getGreeting,
         getCount,
         checkObj,
-        setUserAndCount
+        setUserAndCount,
+        getNumGreeted
     }
 }
