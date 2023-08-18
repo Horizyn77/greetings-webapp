@@ -73,6 +73,22 @@ export default function Greetings() {
         }
     }
 
+    function setErrMsg(input, checked, nums) {
+        if(input && checked && nums) {
+           return "Numbers are not allowed";
+        } else if (input && !checked && nums) {
+            return "Numbers are not allowed";
+        } else if(input && checked && !nums) {
+            return;
+        } else if (!input && !checked) {
+            return "A name and language is required";
+        } else if (input && !checked) {
+            return "A language is required";
+        } else if (!input && checked) {
+            return "A name is required";
+        }
+    }
+
     function getGreeting() {
         return greetingMsg;
     }
@@ -92,6 +108,7 @@ export default function Greetings() {
         getCount,
         checkObj,
         setUserAndCount,
-        getNumGreeted
+        getNumGreeted,
+        setErrMsg
     }
 }

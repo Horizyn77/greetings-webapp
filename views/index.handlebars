@@ -4,7 +4,12 @@
     <form action="/" method="POST">
         <input type="text" name="greetedName" id="" placeholder="Please enter your name">
         <button class="greetBtn" type="submit">Greet Me!</button>
-        <div class="errMsg">A</div>
+        <div class="errMsg">
+            {{#if messages.error}}
+            {{messages.error}}
+            {{/if}}
+            {{clearErrMsg}}
+        </div>
         <h2 class="langHeading">Language: </h2>
         <div id="langGroup">
             <div class="langItem">
