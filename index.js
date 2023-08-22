@@ -5,8 +5,14 @@ import 'dotenv/config';
 import Greetings from "./greetings-webapp.js"
 import session from "express-session";
 import flash from "express-flash";
+import pgPromise from 'pg-promise';
+const pgp = pgPromise({});
 
-const greetings = Greetings();
+const connectionString = process.env.DATABASE_URL;
+
+const db = pgp(connectionString)
+
+const greetings = Greetings(db);
 
 const PORT = process.env.PORT || 3000;
 
@@ -49,13 +55,13 @@ app.post("/", async (req, res) => {
     const name = req.body.greetedName;
     const radioBtnSelected = req.body.lang;
 
-    const pattern = /\d/;
+    const pattern = /[^A-Za-z ]/g
 
-    const containNums = pattern.test(name)
+    const containNumsSpecials = pattern.test(name)
 
-    req.flash("error", greetings.setErrMsg(name, radioBtnSelected, containNums))
+    req.flash("error", greetings.setErrMsg(name, radioBtnSelected, containNumsSpecials))
 
-    if (!greetings.setErrMsg(name, radioBtnSelected, containNums)) {
+    if (!greetings.setErrMsg(name, radioBtnSelected, containNumsSpecials)) {
         await greetings.storeUserAndCount(name);
         greetings.greetUser(name, radioBtnSelected);
     }
@@ -93,6 +99,8 @@ app.get("/counter/:username", (req, res) => {
 app.post("/reset", async (req, res) => {
     
     await greetings.resetGreetedUsers();
+
+    req.flash("reset", "All data has been reset")
 
     res.redirect("/")
 })

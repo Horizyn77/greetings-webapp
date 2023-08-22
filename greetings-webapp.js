@@ -1,11 +1,5 @@
-import pgPromise from 'pg-promise';
-const pgp = pgPromise({});
 
-const connectionString = process.env.DATABASE_URL;
-
-const db = pgp(connectionString)
-
-export default function Greetings() {
+export default function Greetings(db) {
 
     let greetingsCount = {};
     let greetingMsg = "";
@@ -78,9 +72,9 @@ export default function Greetings() {
 
     function setErrMsg(input, checked, nums) {
         if(input && checked && nums) {
-           return "Numbers are not allowed";
+           return "Numbers or special characters are not allowed";
         } else if (input && !checked && nums) {
-            return "Numbers are not allowed";
+            return "Numbers or special characters are not allowed";
         } else if(input && checked && !nums) {
             return;
         } else if (!input && !checked) {
