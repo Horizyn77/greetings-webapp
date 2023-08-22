@@ -12,11 +12,14 @@ export default function Greetings() {
 
     async function storeUserAndCount(user) {
         
-        const existsQuery = "SELECT 1 FROM greetings WHERE greeted_user = $1 LIMIT 1";
+        const existsQuery = "SELECT 1 FROM greetings WHERE greeted_user = $1";
         const result = await db.any(existsQuery, [user]);
-
         const rowExists = result.length > 0;
-    
+
+        const caseQuery = "SELECT greeted_user FROM greetings WHERE lower(greeted_user) = lower($1)";
+        const caseResult = await db.any(caseQuery, [user])
+        const caseExists = caseResult.length > 0;
+
         const insertQuery = `
             INSERT INTO greetings (greeted_user, times_greeted) 
             VALUES ($1, $2)
@@ -25,7 +28,7 @@ export default function Greetings() {
         const updateQuery = `
             UPDATE greetings SET times_greeted = times_greeted + 1 WHERE greeted_user = $1;
         `
-        if(!rowExists) {
+        if(!rowExists && !caseExists) {
            await db.none(insertQuery, [user, 1])
         } else {
             await db.none(updateQuery, [user])
@@ -101,6 +104,15 @@ export default function Greetings() {
         return Object.keys(greetingsCount).length > 0;
     }
 
+    async function resetGreetedUsers() {
+        const deleteQuery = "DELETE FROM greetings";
+        const reOrderIds = "SELECT setval('greetings_id_seq', 1, false)";
+
+        await db.none(deleteQuery)
+        await db.one(reOrderIds)
+
+    }
+
     return {
         storeUserAndCount,
         greetUser,
@@ -109,6 +121,7 @@ export default function Greetings() {
         checkObj,
         setUserAndCount,
         getNumGreeted,
-        setErrMsg
+        setErrMsg,
+        resetGreetedUsers
     }
 }

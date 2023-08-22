@@ -8,7 +8,6 @@
             {{#if messages.error}}
             {{messages.error}}
             {{/if}}
-            {{clearErrMsg}}
         </div>
         <h2 class="langHeading">Language: </h2>
         <div id="langGroup">
@@ -34,7 +33,9 @@
     <h2 class="greetedUsers">
         <a href="./greeted">View Greeted Users</a>
     </h2>
-    <button class="resetBtn">Reset</button>
+    <form action="/reset" method="POST">
+    <button class="resetBtn" type="submit">Reset</button>    
+    </form>
     <h2 class="greetingHeading">Greeting:</h2>
     <div class="result">{{greeting}}</div>
     <div class="underline"></div>

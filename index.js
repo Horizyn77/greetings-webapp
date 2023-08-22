@@ -34,11 +34,15 @@ app.use(flash());
 
 app.get("/", async (req, res) => {
 
-    let numGreeted = await greetings.getNumGreeted();
+    const numGreeted = await greetings.getNumGreeted()
+
+    const greeting = greetings.getGreeting();
 
     res.render("index", {
-        numGreeted
-    });
+        greeting,
+        numGreeted,
+        messages: req.flash()
+    })
 })
 app.post("/", async (req, res) => {
 
@@ -51,31 +55,12 @@ app.post("/", async (req, res) => {
 
     req.flash("error", greetings.setErrMsg(name, radioBtnSelected, containNums))
 
-    const hbs = create({
-
-        helpers: {
-            clearErrMsg() {
-                setTimeout(() => {
-                    req.flash("error", "");
-                }, 1000)
-            }
-        }
-    })
-
     if (!greetings.setErrMsg(name, radioBtnSelected, containNums)) {
-        greetings.storeUserAndCount(name);
+        await greetings.storeUserAndCount(name);
         greetings.greetUser(name, radioBtnSelected);
     }
 
-    const greeting = greetings.getGreeting();
-
-    let numGreeted = await greetings.getNumGreeted()
-
-    res.render("index", {
-        greeting,
-        numGreeted,
-        messages: req.flash()
-    })
+    res.redirect("/")
 
 })
 
@@ -103,6 +88,13 @@ app.get("/counter/:username", (req, res) => {
     res.render("counter", {
         userCount
     })
+})
+
+app.post("/reset", async (req, res) => {
+    
+    await greetings.resetGreetedUsers();
+
+    res.redirect("/")
 })
 
 

@@ -15,5 +15,13 @@
     </div>
     <script src="https://kit.fontawesome.com/4fa987b37c.js" crossorigin="anonymous"></script>
 </body>
+<script>
+    const errMsgElement = document.querySelector(".errMsg");
 
+    if (errMsgElement.innerText !== "") {
+        setTimeout(() => {
+            errMsgElement.innerText = "";
+        }, 3000)
+    }
+</script>
 </html>
