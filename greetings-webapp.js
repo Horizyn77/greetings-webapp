@@ -7,7 +7,7 @@ const db = pgp(connectionString)
 
 export default function Greetings() {
 
-    const greetingsCount = {};
+    let greetingsCount = {};
     let greetingMsg = "";
 
     async function storeUserAndCount(user) {
@@ -110,6 +110,8 @@ export default function Greetings() {
 
         await db.none(deleteQuery)
         await db.one(reOrderIds)
+
+        greetingsCount = {};
 
     }
 
