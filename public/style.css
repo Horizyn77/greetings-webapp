@@ -127,6 +127,7 @@ input[type="text"] {
     padding-bottom: 4px;
     margin-bottom: 0;
     /* visibility: hidden; */
+    font-size: 20px;
 }
 
 .langHeading {
