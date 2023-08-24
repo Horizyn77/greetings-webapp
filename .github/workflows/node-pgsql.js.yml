@@ -28,6 +28,6 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm test
+      run: npm test
       env:
-        DATABASE_URL=postgres://greetings_postgres_user:aMUnTV4ibJXwDBbvNpV66NDAmiLaPWQJ@dpg-cjd0onbbq8nc73fhveh0-a.oregon-postgres.render.com/greetings_postgres?ssl=true
+        DATABASE_URL: postgres://greetings_postgres_user:aMUnTV4ibJXwDBbvNpV66NDAmiLaPWQJ@dpg-cjd0onbbq8nc73fhveh0-a.oregon-postgres.render.com/greetings_postgres?ssl=true
