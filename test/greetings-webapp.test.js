@@ -1,5 +1,5 @@
 import assert from 'assert';
-import GreetingsWebapp from '../greetings-webapp.js';
+import GreetingsService from '../services/greetings-service.js';
 import pgPromise from 'pg-promise';
 import 'dotenv/config'
 
@@ -9,7 +9,7 @@ const connectionString = process.env.DATABASE_URL;
 
 const db = pgp(connectionString)
 
-const greetingsWebApp = GreetingsWebapp(db)
+const greetingsService = GreetingsService(db)
 
 describe("Testing the greetings database", async function () {
     this.timeout(20000)
@@ -21,14 +21,14 @@ describe("Testing the greetings database", async function () {
 
     it("should check that all data has been cleared", async function () {
 
-        const result = await greetingsWebApp.getNumGreeted()
+        const result = await greetingsService.getCount();
 
         assert.equal(result, 0)
     })
 
     it("should check that a user can be successfully added to the database", async function () {
-        await greetingsWebApp.storeUserAndCount("Hidaayat");
-        const result = await greetingsWebApp.setUserAndCount()
+        await greetingsService.add("Hidaayat");
+        const result = await greetingsService.getUsersAndCount();
 
         const addedUser = { Hidaayat: 1 }
 
@@ -37,9 +37,9 @@ describe("Testing the greetings database", async function () {
     })
 
     it("should check that the count can be successfully updated when the user is added twice", async function () {
-        await greetingsWebApp.storeUserAndCount("Hidaayat");
-        await greetingsWebApp.storeUserAndCount("Hidaayat");
-        const result = await greetingsWebApp.setUserAndCount()
+        await greetingsService.add("Hidaayat");
+        await greetingsService.update("Hidaayat");
+        const result = await greetingsService.getUsersAndCount()
 
         const addedUser = { Hidaayat: 2 }
 
@@ -47,10 +47,10 @@ describe("Testing the greetings database", async function () {
     })
 
     it("should check that a different user can be successfully added and updated in the database", async function () {
-        await greetingsWebApp.storeUserAndCount("Hidaayat");
-        await greetingsWebApp.storeUserAndCount("Ryan");
-        await greetingsWebApp.storeUserAndCount("Ryan")
-        const result = await greetingsWebApp.setUserAndCount();
+        await greetingsService.add("Hidaayat");
+        await greetingsService.add("Ryan");
+        await greetingsService.update("Ryan")
+        const result = await greetingsService.getUsersAndCount();
 
         const addedUsers = { Hidaayat: 1, Ryan: 2}
 
@@ -58,13 +58,11 @@ describe("Testing the greetings database", async function () {
     })
 
     it("should check that the table can be cleared when the reset button is pressed", async function () {
+        //Adding data to the database
 
-        //Resetting greetingsCount object in factory function
-        await greetingsWebApp.resetGreetedUsers();
-
-        await greetingsWebApp.storeUserAndCount("Hidaayat");
-        await greetingsWebApp.storeUserAndCount("Mark");
-        const result = await greetingsWebApp.setUserAndCount();
+        await greetingsService.add("Hidaayat");
+        await greetingsService.add("Mark");
+        const result = await greetingsService.getUsersAndCount();
 
         const addedUsers = { Hidaayat: 1, Mark: 1}
 
@@ -73,11 +71,11 @@ describe("Testing the greetings database", async function () {
 
         //Calling the reset function and deleting all data from the table
 
-        await greetingsWebApp.resetGreetedUsers();
+        await greetingsService.deleteAll();
 
-        const resetResult = await greetingsWebApp.setUserAndCount();
+        const resetResult = await greetingsService.getUsersAndCount();
 
-        //Checking if greetingsCount object is empty as a result of delete all data from the table
+        //Checking if no data is returned as a result of deleting all data from the table
 
         assert.deepEqual(resetResult, {})
 

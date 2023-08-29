@@ -1,18 +1,21 @@
 import express from "express";
-const app = express();
-import { engine, create } from "express-handlebars";
+import { engine } from "express-handlebars";
 import 'dotenv/config';
+
 import Greetings from "./greetings-webapp.js"
+import GreetingsRoutes from "./routes/greetings-routes.js"
+import GreetingsService from "./services/greetings-service.js";
+
 import session from "express-session";
 import flash from "express-flash";
 import pgPromise from 'pg-promise';
+
+const app = express();
 const pgp = pgPromise({});
 
 const connectionString = process.env.DATABASE_URL;
 
 const db = pgp(connectionString)
-
-const greetings = Greetings(db);
 
 const PORT = process.env.PORT || 3000;
 
@@ -37,73 +40,18 @@ app.use(session({
 }))
 app.use(flash());
 
+const greetings = Greetings();
+const greetingsService = GreetingsService(db)
+const greetingsRoutes = GreetingsRoutes(greetingsService, greetings)
 
-app.get("/", async (req, res) => {
+app.get("/", greetingsRoutes.showHome)
 
-    const numGreeted = await greetings.getNumGreeted()
+app.post("/", greetingsRoutes.addGreeting)
 
-    const greeting = greetings.getGreeting();
+app.get("/greeted", greetingsRoutes.showGreetedUsers)
 
-    res.render("index", {
-        greeting,
-        numGreeted,
-        messages: req.flash()
-    })
-})
-app.post("/", async (req, res) => {
+app.get("/counter/:username", greetingsRoutes.showCounter)
 
-    const name = req.body.greetedName;
-    const radioBtnSelected = req.body.lang;
-
-    const pattern = /[^A-Za-z ]/g
-
-    const containNumsSpecials = pattern.test(name)
-
-    req.flash("error", greetings.setErrMsg(name, radioBtnSelected, containNumsSpecials))
-
-    if (!greetings.setErrMsg(name, radioBtnSelected, containNumsSpecials)) {
-        await greetings.storeUserAndCount(name);
-        greetings.greetUser(name, radioBtnSelected);
-    }
-
-    res.redirect("/")
-
-})
-
-app.get("/greeted", async (req, res) => {
-    const countObj = await greetings.setUserAndCount();
-    const checkObj = greetings.checkObj();
-
-    res.render("greetedUsers", {
-        countObj,
-        checkObj
-    })
-})
-
-app.get("/counter/:username", (req, res) => {
-    const countObj = greetings.getCount();
-    const user = req.params.username;
-    let userCount = {};
-
-    for (let key in countObj) {
-        if (key == user) {
-            userCount[key] = countObj[key];
-        }
-    }
-
-    res.render("counter", {
-        userCount
-    })
-})
-
-app.post("/reset", async (req, res) => {
-    
-    await greetings.resetGreetedUsers();
-
-    req.flash("reset", "All data has been reset")
-
-    res.redirect("/")
-})
-
+app.post("/reset", greetingsRoutes.deleteAllData)
 
 app.listen(PORT, () => console.log(`Server started at Port: ${PORT}`));

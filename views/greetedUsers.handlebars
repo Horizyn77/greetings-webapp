@@ -1,7 +1,7 @@
 <h1>The following users have been greeted:</h1>
 <ul class="greetedList">
-    {{#if checkObj}}
-    {{#each countObj}}
+    {{#if checkUsersAndCount}}
+    {{#each getUsersAndCount}}
     <li><a href="./counter/{{@key}}">{{@key}}</a></li>
     {{/each}}
     {{else}}
