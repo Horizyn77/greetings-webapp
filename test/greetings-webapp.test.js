@@ -1,5 +1,6 @@
 import assert from 'assert';
 import GreetingsService from '../services/greetings-service.js';
+import Greetings from '../greetings-webapp.js'
 import pgPromise from 'pg-promise';
 import 'dotenv/config'
 
@@ -10,6 +11,7 @@ const connectionString = process.env.DATABASE_URL;
 const db = pgp(connectionString)
 
 const greetingsService = GreetingsService(db)
+const greetings = Greetings();
 
 describe("Testing the greetings database", async function () {
     this.timeout(20000)
@@ -80,6 +82,27 @@ describe("Testing the greetings database", async function () {
         assert.deepEqual(resetResult, {})
 
     })
+
+    it("should be able to greet a user in their language", function() {
+        greetings.greetUser("Rob", "ara");
+
+        assert.equal("Marhaba, Rob", greetings.getGreeting());
+    })
+
+    it("should be able to greet another user in a different language", function() {
+        greetings.greetUser("Mark", "urd");
+
+        assert.equal("Salaam, Mark", greetings.getGreeting());
+    })
+
+    it("should return an error message of 'Numbers or special characters not allowed' when the input does not pass the validation check for numbers or special characters", function() {
+        assert.equal("Numbers or special characters are not allowed", greetings.setErrMsg(true, true, true))
+    })
+
+    it("should return an error message of 'A name and language is required' when the input does not pass the validation check for name and language", function() {
+        assert.equal("A name and language is required", greetings.setErrMsg(false, false))
+    })
+
     after(function () {
         db.$pool.end;
     });

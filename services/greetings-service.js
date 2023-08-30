@@ -17,14 +17,14 @@ export default function GreetingsService(db) {
 
     async function rowExists(user) {
         const existsQuery = "SELECT 1 FROM greetings WHERE greeted_user = $1";
-        const result = await db.any(existsQuery, [user]);
+        const result = await db.manyOrNone(existsQuery, [user]);
 
         return result.length > 0;
     }
 
     async function caseExists(user) {
         const caseQuery = "SELECT greeted_user FROM greetings WHERE lower(greeted_user) = lower($1)";
-        const result = await db.any(caseQuery, [user]);
+        const result = await db.manyOrNone(caseQuery, [user]);
 
         return result.length > 0;
     }
@@ -49,7 +49,7 @@ export default function GreetingsService(db) {
         const selectQuery = `
             SELECT greeted_user, times_greeted FROM greetings;
         `
-        const result = await db.any(selectQuery)
+        const result = await db.manyOrNone(selectQuery)
 
         const mappedResult = result.reduce((initialObj, currentObj) => {
             return Object.assign(initialObj, { [currentObj.greeted_user]: currentObj.times_greeted })
