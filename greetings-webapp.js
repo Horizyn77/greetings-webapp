@@ -37,9 +37,14 @@ export default function Greetings() {
         return greetingMsg;
     }
 
+    function clearGreeting() {
+        greetingMsg = "";
+    }
+
     return {
         greetUser,
         getGreeting,
-        setErrMsg
+        setErrMsg,
+        clearGreeting
     }
 }

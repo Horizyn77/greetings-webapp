@@ -68,6 +68,8 @@ export default function GreetingsRoutes(greetingsService, greetings) {
 
         req.flash("reset", "All data has been reset")
 
+        greetings.clearGreeting();
+
         res.redirect("/")
     }
 
